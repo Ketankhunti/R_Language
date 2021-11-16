@@ -1,0 +1,619 @@
+ [1]  1  3  5  2 11  9  3  9 12  3
+ [1]  4.4  5.3  7.2  5.2  8.5  7.3  6.0 10.4 10.2  6.1
+ [1] 0.59525767 0.28474265 0.48408452 0.54889904 0.06486405 0.47622134
+ [7] 0.45023389 0.69159697 0.88205184 0.64145208 0.24608418 0.85868824
+[13] 0.32826613 0.94789081 0.34442062 0.77091882 0.87255451 0.03784283
+[19] 0.99801965 0.98654943
+ [1]       10403         130  1728161274  1349394684 -1627884225 -1358280171
+ [7]  1570275628  -777883134 -1651588899  1039307735 -1441042754  -508208904
+[13] -1280923941  1044274489   652503176  1358213174 -1402092431 -1520603485
+[19]   930628594   601519940
+ [1]  1  3  5  2 11  9  3  9 12  3
+ [1]  4.4  5.3  7.2  5.2  8.5  7.3  6.0 10.4 10.2  6.1
+ [1] 0.59525767 0.28474265 0.48408452 0.54889904 0.06486405 0.47622134
+ [7] 0.45023389 0.69159697 0.88205184 0.64145208 0.24608418 0.85868824
+[13] 0.32826613 0.94789081 0.34442062 0.77091882 0.87255451 0.03784283
+[19] 0.99801965 0.98654943
+ [1]       10403         130  1728161274  1349394684 -1627884225 -1358280171
+ [7]  1570275628  -777883134 -1651588899  1039307735 -1441042754  -508208904
+[13] -1280923941  1044274489   652503176  1358213174 -1402092431 -1520603485
+[19]   930628594   601519940
+ [1]  1  3  5  2 11  9  3  9 12  3
+ [1]  4.4  5.3  7.2  5.2  8.5  7.3  6.0 10.4 10.2  6.1
+ [1] 0.59525767 0.28474265 0.48408452 0.54889904 0.06486405 0.47622134
+ [7] 0.45023389 0.69159697 0.88205184 0.64145208 0.24608418 0.85868824
+[13] 0.32826613 0.94789081 0.34442062 0.77091882 0.87255451 0.03784283
+[19] 0.99801965 0.98654943
+ [1]       10403         130  1728161274  1349394684 -1627884225 -1358280171
+ [7]  1570275628  -777883134 -1651588899  1039307735 -1441042754  -508208904
+[13] -1280923941  1044274489   652503176  1358213174 -1402092431 -1520603485
+[19]   930628594   601519940
+ [1]  1  3  5  2 11  9  3  9 12  3
+ [1]  4.4  5.3  7.2  5.2  8.5  7.3  6.0 10.4 10.2  6.1
+ [1] 0.59525767 0.28474265 0.48408452 0.54889904 0.06486405 0.47622134
+ [7] 0.45023389 0.69159697 0.88205184 0.64145208 0.24608418 0.85868824
+[13] 0.32826613 0.94789081 0.34442062 0.77091882 0.87255451 0.03784283
+[19] 0.99801965 0.98654943
+[1] 5.8
+$add.smooth
+[1] TRUE
+
+$askYesNo
+function (msg, ...) 
+{
+    flush.console()
+    ans <- winDialog("yesnocancel", msg)
+    switch(ans, YES = TRUE, NO = FALSE, NA)
+}
+<bytecode: 0x000001b489241700>
+<environment: namespace:utils>
+
+$browser
+function(url) {
+  if (grepl('^https?:', url)) {
+    if (!.Call('.jetbrains_processBrowseURL', url)) {
+      browseURL(url, .jetbrains$ther_old_browser)
+    }
+  } else {
+    .Call('.jetbrains_showFile', url, url)
+  }
+}
+
+$browserNLdisabled
+[1] FALSE
+
+$CBoundsCheck
+[1] FALSE
+
+$check.bounds
+[1] FALSE
+
+$citation.bibtex.max
+[1] 1
+
+$connectionObserver
+$connectionObserver$connectionOpened
+function(type, host, displayName, icon = NULL, 
+                               connectCode, disconnect, listObjectTypes,
+                               listObjects, listColumns, previewObject, 
+                               connectionObject, actions = NULL) {
+
+      # execute the object types function once to get the list of known 
+      # object types; this is presumed to be static over the lifetime of the
+      # connection
+      if (!inherits(listObjectTypes, "function")) {
+         stop("listObjectTypes must be a function returning a list of object types", 
+              call. = FALSE)
+      }
+
+      # function to flatten the tree of object types for more convenient storage
+      promote <- function(name, l) {
+        if (length(l) == 0)
+          return(list())
+        if (is.null(l$contains)) {
+          # plain data
+          return(list(list(name = name,
+                      icon = l$icon,
+                      contains = "data")))
+        } else {
+          # subtypes
+          return(unlist(append(list(list(list(
+            name = name, 
+            icon = l$icon, 
+            contains = names(l$contains)))),
+            lapply(names(l$contains), function(name) {
+              promote(name, l$contains[[name]])
+            })), recursive = FALSE))
+        }
+        return(list())
+      }
+      
+      # apply tree flattener to provided object tree
+      objectTree <- listObjectTypes()
+      objectTypes <- lapply(names(objectTree), function(name) {
+         promote(name, objectTree[[name]])
+      })[[1]]
+      
+      # manufacture and validate object representing this connection
+      connection <- list(
+         type             = type,            # the type of the connection
+         host             = host,            # the host being connected to
+         displayName      = displayName,     # the name to display 
+         icon             = icon,            # an icon representing the connection
+         connectCode      = connectCode,     # code to (re)establish connection
+         disconnect       = disconnect,      # function that disconnects
+         objectTypes      = objectTypes,     # list of object types known 
+         listObjects      = listObjects,     # list objects (all or in container)
+         listColumns      = listColumns,     # list columns of a data object
+         previewObject    = previewObject,   # preview an object
+         actions          = actions,         # list of actions possible on conn
+         connectionObject = connectionObject # raw connection object
+      )
+      class(connection) <- "rstudioConnection"
+      .rs.validateConnection(connection)
+
+      # generate an internal key for this connection in the local cache 
+      cacheKey <- paste(connection$type, connection$host, 
+                        .Call("rs_generateShortUuid"), 
+                        sep = "_")
+      assign(cacheKey, value = connection, envir = .rs.activeConnections)
+
+      # serialize and generate client events
+      #invisible(.Call("rs_connectionOpened", connection))
+   }
+<environment: 0x000001b4877281f0>
+
+$connectionObserver$connectionClosed
+function(type, host, ...) {
+      .rs.validateCharacterParams(list(type = type, host = host))
+
+      # clean up reference in environment
+      name <- .rs.findConnectionName(type, host)
+      if (!is.null(name))
+         rm(list = name, envir = .rs.activeConnections)
+
+      #invisible(.Call("rs_connectionClosed", type, host))
+   }
+<environment: 0x000001b4877281f0>
+
+$connectionObserver$connectionUpdated
+function(type, host, hint, ...) {
+      .rs.validateCharacterParams(list(type = type, host = host, hint = hint))
+      #invisible(.Call("rs_connectionUpdated", type, host, hint))
+   }
+<environment: 0x000001b4877281f0>
+
+
+$continue
+[1] "+ "
+
+$contrasts
+        unordered           ordered 
+"contr.treatment"      "contr.poly" 
+
+$defaultPackages
+[1] "datasets"  "utils"     "grDevices" "graphics"  "stats"     "methods"  
+
+$demo.ask
+[1] TRUE
+
+$deparse.cutoff
+[1] 60
+
+$device
+function() {
+  .Call(".jetbrains_ther_device_restart")
+}
+
+$device.ask.default
+[1] FALSE
+
+$digit
+[1] 3
+
+$digits
+[1] 7
+
+$echo
+[1] TRUE
+
+$editor
+[1] "notepad"
+
+$encoding
+[1] "native.enc"
+
+$example.ask
+[1] "default"
+
+$expressions
+[1] 5000
+
+$help.search.types
+[1] "vignette" "demo"     "help"    
+
+$help.try.all.packages
+[1] FALSE
+
+$help_type
+[1] "html"
+
+$HTTPUserAgent
+[1] "Rkernel/211.7142.45"
+
+$install.packages.compile.from.source
+[1] "always"
+
+$internet.info
+[1] 2
+
+$keep.parse.data
+[1] TRUE
+
+$keep.parse.data.pkgs
+[1] FALSE
+
+$keep.source
+[1] TRUE
+
+$keep.source.pkgs
+[1] FALSE
+
+$locatorBell
+[1] TRUE
+
+$mailer
+[1] "mailto"
+
+$matprod
+[1] "default"
+
+$max.print
+[1] 99999
+
+$menu.graphics
+[1] TRUE
+
+$na.action
+[1] "na.omit"
+
+$nwarnings
+[1] 50
+
+$OutDec
+[1] "."
+
+$pager
+function(files, header = '', title = '', delete.file = TRUE) {
+  if (!is.logical(delete.file)) stop("'delete.file' must be logical")
+  for (f in files) {
+    .Call('.jetbrains_showFile', normalizePath(f), title)
+    if (delete.file) unlink(f)
+  }
+}
+
+$papersize
+[1] "a4"
+
+$PCRE_limit_recursion
+[1] NA
+
+$PCRE_study
+[1] FALSE
+
+$PCRE_use_JIT
+[1] TRUE
+
+$pdfviewer
+[1] "C:/PROGRA~1/R/R-4.1.2/bin/x64/open.exe"
+
+$pkgType
+[1] "both"
+
+$prompt
+[1] "> "
+
+$repos
+    CRAN 
+"@CRAN@" 
+
+$reticulate.repl.hook
+function(buffer, contents, trimmed)
+{
+   # special handling for commands when buffer is currently empty
+   if (buffer$empty())
+   {
+      # detect help requests, and route to Help pane
+      if (grepl("^[?]", trimmed))
+      {
+         text <- substring(trimmed, 2)
+         .Call("rs_showPythonHelp", text, PACKAGE = "(embedding)")
+         return(TRUE)
+      }
+      
+      reHelp <- "help\\((.*)\\)"
+      if (grepl(reHelp, trimmed))
+      {
+         text <- gsub(reHelp, "\\1", trimmed)
+         .Call("rs_showPythonHelp", text, PACKAGE = "(embedding)")
+         return(TRUE)
+      }
+   }
+   
+   FALSE
+}
+<environment: 0x000001b487fccd50>
+
+$reticulate.repl.initialize
+function()
+{
+   builtins <- reticulate::import_builtins(convert = FALSE)
+   
+   # override help method (Python's interactive help does
+   # not play well with RStudio)
+   help <- builtins$help
+   .rs.setVar("reticulate.help", builtins$help)
+   builtins$help <- function(...) {
+      dots <- list(...)
+      if (length(dots) == 0) {
+         message("Error: Interactive Python help not available within RStudio")
+         return()
+      }
+      help(...)
+   }
+   
+   # install matplotlib hook if available
+   if (requireNamespace("png", quietly = TRUE) &&
+       reticulate::py_module_available("matplotlib"))
+   {
+      matplotlib <- reticulate::import("matplotlib", convert = TRUE)
+      
+      # force the "Agg" backend (this is necessary as other backends may
+      # fail with RStudio if requisite libraries are not available)
+      backend <- matplotlib$get_backend()
+      if (!identical(tolower(backend), "agg"))
+      {
+         sys <- reticulate::import("sys", convert = TRUE)
+         if ("matplotlib.backends" %in% names(sys$modules))
+            matplotlib$pyplot$switch_backend("agg")
+         else
+            matplotlib$use("agg", warn = FALSE, force = TRUE)
+      }
+      
+      # inject our hook
+      plt <- matplotlib$pyplot
+      .rs.setVar("reticulate.matplotlib.show", plt$show)
+      plt$show <- .rs.reticulate.matplotlib.showHook
+   }
+   
+}
+<environment: 0x000001b487fccd50>
+
+$reticulate.repl.teardown
+function()
+{
+   # restore old help method
+   builtins <- reticulate::import_builtins(convert = FALSE)
+   builtins$help <- .rs.getVar("reticulate.help")
+   
+   # restore matplotlib method
+   show <- .rs.getVar("reticulate.matplotlib.show")
+   if (!is.null(show)) {
+      matplotlib <- reticulate::import("matplotlib", convert = TRUE)
+      plt <- matplotlib$pyplot
+      plt$show <- show
+   }
+   
+}
+<environment: 0x000001b487fccd50>
+
+$scipen
+[1] 0
+
+$show.coef.Pvalues
+[1] TRUE
+
+$show.error.messages
+[1] TRUE
+
+$show.signif.stars
+[1] TRUE
+
+$str
+$str$strict.width
+[1] "no"
+
+$str$digits.d
+[1] 3
+
+$str$vec.len
+[1] 4
+
+$str$list.len
+[1] 99
+
+$str$deparse.lines
+NULL
+
+$str$drop.deparse.attr
+[1] TRUE
+
+$str$formatNum
+function (x, ...) 
+format(x, trim = TRUE, drop0trailing = TRUE, ...)
+<environment: 0x000001b489237eb0>
+
+
+$str.dendrogram.last
+[1] "`"
+
+$stringsAsFactors
+[1] FALSE
+
+$terminal.manager
+$terminal.manager$terminalActivate
+function(id = NULL, show = TRUE) {
+   if (!is.null(id) && (!is.character(id) || (length(id) != 1)))
+      stop("'id' must be NULL or a character vector of length one")
+
+   if (!is.logical(show))
+     stop("'show' must be TRUE or FALSE")
+
+   # .Call(".jetbrains_terminal", list(id, show), 22)
+   invisible(NULL)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalCreate
+function(caption = NULL, show = TRUE, shellType = NULL) {
+   if (!is.null(caption) && (!is.character(caption) || (length(caption) != 1)))
+      stop("'caption' must be NULL or a character vector of length one")
+
+   if (is.null(show) || !is.logical(show))
+      stop("'show' must be a logical vector")
+
+   if (!is.null(shellType) && (!is.character(shellType) || (length(shellType) != 1)))
+      stop("'shellType' must be NULL or a character vector of length one")
+
+   validShellType = TRUE
+   if (!is.null(shellType)) {
+      validShellType <- tolower(shellType) %in% c("default", "win-cmd", 
+            "win-ps", "win-git-bash", "win-wsl-bash", "custom")
+   }      
+   if (!validShellType)
+      stop("'shellType' must be NULL, or one of 'default', 'win-cmd', 'win-ps', 'win-git-bash', 'win-wsl-bash', or 'custom'.") 
+
+   .Call(".jetbrains_terminal", list(caption, show, shellType), 27)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalClear
+function(id) {
+   if (is.null(id) || !is.character(id) || length(id) != 1)
+      stop("'id' must be a character vector of length one")
+
+  .Call(".jetbrains_terminal", list(id), 25)
+  invisible(NULL)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalList
+function() {
+   .Call(".jetbrains_terminal", list(), 31)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalContext
+function(id) {
+   if (is.null(id) || !is.character(id) || (length(id) != 1))
+      stop("'id' must be a single element character vector")
+
+   .Call(".jetbrains_terminal", list(id), 26)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalBuffer
+function(id, stripAnsi = TRUE) {
+   if (is.null(id) || !is.character(id) || (length(id) != 1))
+      stop("'id' must be a single element character vector")
+
+   if (is.null(stripAnsi) || !is.logical(stripAnsi))
+      stop("'stripAnsi' must be a logical vector")
+
+   .Call(".jetbrains_terminal", list(id, stripAnsi), 23)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalVisible
+function() {
+   .Call(".jetbrains_terminal", list(), 34)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalBusy
+function(id) {
+   if (is.null(id) || !is.character(id))
+      stop("'id' must be a character vector")
+
+   .Call(".jetbrains_terminal", list(id), 24)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalRunning
+function(id) {
+   if (is.null(id) || !is.character(id))
+      stop("'id' must be a character vector")
+
+   .Call(".jetbrains_terminal", list(id), 32)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalKill
+function(id) {
+   if (is.null(id) || !is.character(id))
+      stop("'id' must be a character vector")
+
+   .Call(".jetbrains_terminal", list(id), 30)
+   invisible(NULL)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalSend
+function(id, text) {
+   if (!is.character(text))
+      stop("'text' should be a character vector", call. = FALSE)
+
+   if (is.null(id) || !is.character(id) || length(id) != 1)
+      stop("'id' must be a character vector of length one")
+
+  .Call(".jetbrains_terminal", list(id, text), 33)
+   invisible(NULL)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalExecute
+function(command,
+                                               workingDir = NULL,
+                                               env = character(),
+                                               show = TRUE) {
+   if (is.null(command) || !is.character(command) || (length(command) != 1))
+      stop("'command' must be a single element character vector")
+   if (!is.null(workingDir) && (!is.character(workingDir) || (length(workingDir) != 1)))
+      stop("'workingDir' must be a single element character vector")
+   if (!is.null(env) && !is.character(env))
+      stop("'env' must be a character vector")
+   if (is.null(show) || !is.logical(show))
+      stop("'show' must be a logical vector")
+
+   .Call(".jetbrains_terminal", list(command, workingDir, env, show), 28)
+}
+<environment: 0x000001b487fccd50>
+
+$terminal.manager$terminalExitCode
+function(id) {
+   if (is.null(id) || !is.character(id) || (length(id) != 1))
+      stop("'id' must be a single element character vector")
+
+   .Call(".jetbrains_terminal", list(id), 29)
+}
+<environment: 0x000001b487fccd50>
+
+
+$timeout
+[1] 60
+
+$ts.eps
+[1] 1e-05
+
+$ts.S.compat
+[1] FALSE
+
+$unzip
+[1] "internal"
+
+$useFancyQuotes
+[1] TRUE
+
+$verbose
+[1] FALSE
+
+$warn
+[1] 1
+
+$warning.length
+[1] 1000
+
+$width
+[1] 102
+
+$windowsTimeouts
+[1] 100 500
+
+[1] 2.077498
+[1] 0.9075655
+ [1]  1  3  5  2 11  9  3  9 12  3
+ [1]  4.4  5.3  7.2  5.2  8.5  7.3  6.0 10.4 10.2  6.1
+ [1] 0.59525767 0.28474265 0.48408452 0.54889904 0.06486405 0.47622134
+ [7] 0.45023389 0.69159697 0.88205184 0.64145208 0.24608418 0.85868824
+[13] 0.32826613 0.94789081 0.34442062 0.77091882 0.87255451 0.03784283
+[19] 0.99801965 0.98654943
